@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Models Trained</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #222;
+        }
+
+        #search-box {
+            display: block;
+            margin: 0 auto 2rem;
+            padding: 0.5rem;
+            width: 60%;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        section {
+            background-color: #ffffff;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 1rem;
+            font-weight: bold;
+            color: #007acc;
+            background-color: #eaf6ff;
+            border-bottom: 1px solid #ddd;
+            user-select: none;
+        }
+
+        ul {
+            list-style: none;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #005f99;
+        }
+
+        nav {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #007acc;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Models Trained</h1>
+    <input type="text" id="search-box" placeholder="Search model name..." />
+
+    <div id="models-container"></div>
+
+    <script>
+        const modelsData = {
+            "2025-4-30": ["2_Poisson_report.html", "2_RandomForest_report.html", "2_XGBoost_report.html", "1_parameters.html"],
+            "2025-4-29": ["2_Poisson_report.html", "2_RandomForest_report.html", "2_XGBoost_report.html", "1_parameters.html"]
+        };
+
+        const container = document.getElementById('models-container');
+
+        for (const date in modelsData) {
+            const details = document.createElement('details');
+            details.open = true;
+
+            const summary = document.createElement('summary');
+            summary.textContent = date;
+
+            const ul = document.createElement('ul');
+
+            modelsData[date].forEach(model => {
+                const li = document.createElement('li');
+                const modelName = model.substring(2).replace('.html', '');
+
+                li.setAttribute('data-model', modelName.toLowerCase());
+                li.innerHTML = `
+                    <span>${modelName}</span>
+                    <a href="${date.substring(5)}/${model}" target="_blank">
+                        <button>View</button>
+                    </a>
+                `;
+                ul.appendChild(li);
+            });
+
+            details.appendChild(summary);
+            details.appendChild(ul);
+            container.appendChild(details);
+        }
+
+        // Filter functionality
+        document.getElementById('search-box').addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#models-container li').forEach(li => {
+                const model = li.getAttribute('data-model');
+                li.style.display = model.includes(query) ? 'flex' : 'none';
+            });
+        });
+    </script>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+</body>
+</html>
