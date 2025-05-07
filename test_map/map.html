@@ -53,6 +53,7 @@
 
     function updateMap(bins) {
       if (geojsonLayer) map.removeLayer(geojsonLayer);
+    
       fetch('bike_flow.geojson')
         .then(res => res.json())
         .then(data => {
@@ -62,9 +63,31 @@
               layer.bindTooltip(`Street: ${feature.properties.NOM_VIA}<br>AADBT: ${feature.properties.Total_AADBT.toFixed(0)}`);
             }
           }).addTo(map);
+    
+          // Update legend
+          const colors = ['#ffffcc', '#a1dab4', '#41b6c4', '#2c7fb8', '#253494'];
+          let labels = [];
+          for (let i = 0; i < bins.length + 1; i++) {
+            let from = i === 0 ? 0 : bins[i - 1];
+            let to = bins[i] || '∞';
+            labels.push(
+              `<i style="background:${colors[i]};width:18px;height:18px;display:inline-block;margin-right:5px;"></i> ${from} &ndash; ${to}`
+            );
+          }
+    
+          const legendDiv = document.querySelector('.legend');
+          legendDiv.innerHTML = `<strong>Bike Flow (AADBT)</strong><br>${labels.join('<br>')}`;
         });
     }
-
+    const legend = L.control({ position: 'bottomright' });
+    
+    legend.onAdd = function (map) {
+      const div = L.DomUtil.create('div', 'info legend');
+      div.innerHTML = "<strong>Bike Flow (AADBT)</strong><br>";
+      return div;
+    };
+    
+    legend.addTo(map);
     document.getElementById('binSelect').addEventListener('change', e => {
       const bins = colorScales[e.target.value];
       updateMap(bins);
