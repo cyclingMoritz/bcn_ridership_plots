@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Poisson Model Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { text-align: center; }
+    .tabs { display: flex; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; }
+    .tabs button { margin: 5px; padding: 10px 15px; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; }
+    .tabs button:hover { background-color: #e0e0e0; }
+    .content iframe { width: 100%; height: 600px; border: 1px solid #ccc; }
+    .content { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h1 id="main-heading">Poisson Model Report</h1>
+
+<div class="tabs">
+  <button onclick="loadPage('metrics_table_Poisson.html')">Metrics</button>
+  <button onclick="loadPage('metrics_summary_Poisson.html')">Metrics Summary</button>
+  <button onclick="loadPage('actual_vs_predicted_Poisson.html')">Actual vs Predicted</button>
+  <button onclick="loadPage('residuals_Poisson.html')">Residuals</button>
+  <button onclick="loadPage('residual_difference_Poisson.html')">Residual Difference</button>
+  <button onclick="loadPage('map_predicted_aadbt_poisson.html')">Prediction Map</button>
+</div>
+
+<div class="content">
+  <iframe id="iframe-content" src="metrics_table_Poisson.html"></iframe>
+</div>
+
+<script>
+function loadPage(page) {
+  document.getElementById('iframe-content').src = page;
+}
+
+// Dynamically add folder name to heading
+(function() {
+  const pathParts = window.location.pathname.split('/');
+  const folderName = pathParts[pathParts.length - 2];
+  const heading = document.getElementById('main-heading');
+  heading.textContent += ` – ${folderName}`;
+})();
+</script>
+
+</body>
+</html>

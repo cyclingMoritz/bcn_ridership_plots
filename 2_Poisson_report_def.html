@@ -15,27 +15,34 @@
 </head>
 <body>
 
-<h1>Poisson Model Report</h1>
+<h1 id="main-heading">Poisson Model Report</h1>
 
 <div class="tabs">
-  <button onclick="loadPage('metrics_Poisson.html')">Metrics</button>
+  <button onclick="loadPage('metrics_table_Poisson.html')">Metrics</button>
+  <button onclick="loadPage('metrics_summary_Poisson.html')">Metrics Summary</button>
   <button onclick="loadPage('actual_vs_predicted_Poisson.html')">Actual vs Predicted</button>
-  <button onclick="loadPage('cv_metrics_report_Poisson.html')">Test CV Folds</button>
   <button onclick="loadPage('residuals_Poisson.html')">Residuals</button>
   <button onclick="loadPage('residual_difference_Poisson.html')">Residual Difference</button>
+  <button onclick="loadPage('model_summary_Poisson.html')">Model Summary</button>
   <button onclick="loadPage('map_predicted_aadbt_poisson.html')">Prediction Map</button>
-
 </div>
 
 <div class="content">
-  <iframe id="iframe-content" src="metrics_Poisson.html"></iframe>
+  <iframe id="iframe-content" src="metrics_table_Poisson.html"></iframe>
 </div>
 
 <script>
-
 function loadPage(page) {
-  document.getElementById('iframe-content').src = `${page}`;
+  document.getElementById('iframe-content').src = page;
 }
+
+// Dynamically add folder name to heading
+(function() {
+  const pathParts = window.location.pathname.split('/');
+  const folderName = decodeURIComponent(pathParts[pathParts.length - 2]);
+  const heading = document.getElementById('main-heading');
+  heading.textContent += ` – ${folderName}`;
+})();
 </script>
 
 </body>

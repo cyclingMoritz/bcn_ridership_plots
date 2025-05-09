@@ -15,12 +15,12 @@
 </head>
 <body>
 
-<h1>Random Forest Model Report</h1>
+  <h1 id="main-heading">Random Forest Model Report</h1>
 
 <div class="tabs">
-  <button onclick="loadPage('metrics_RandomForest.html')">Metrics</button>
+  <button onclick="loadPage('metrics_table_RandomForest.html')">Metrics</button>
+  <button onclick="loadPage('metrics_summary_RandomForest.html')">Metrics Summary</button>
   <button onclick="loadPage('actual_vs_predicted_RandomForest.html')">Actual vs Predicted</button>
-  <button onclick="loadPage('cv_metrics_report_RandomForest.html')">Test CV Folds</button>
   <button onclick="loadPage('residuals_RandomForest.html')">Residuals</button>
   <button onclick="loadPage('residual_difference_RandomForest.html')">Residual Difference</button>
   <button onclick="loadPage('feature_importances_RandomForest.html')">Feature Importances</button>
@@ -29,7 +29,7 @@
 </div>
 
 <div class="content">
-  <iframe id="iframe-content" src="metrics_RandomForest.html"></iframe>
+  <iframe id="iframe-content" src="metrics_table_RandomForest.html"></iframe>
 </div>
 
 <script>
@@ -39,6 +39,14 @@ function loadPage(page) {
   document.getElementById('iframe-content').src = `${page}`;
 }
 </script>
-
+<script>
+  (function() {
+    const pathParts = window.location.pathname.split('/');
+    const folderName = decodeURIComponent(pathParts[pathParts.length - 2]);
+    const heading = document.getElementById('main-heading');
+    heading.textContent += ` – ${folderName}`;
+  })();
+  </script>
+  
 </body>
 </html>
