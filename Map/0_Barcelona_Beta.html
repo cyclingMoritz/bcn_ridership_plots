@@ -78,7 +78,7 @@
     function updateMap(bins) {
       if (geojsonLayer) map.removeLayer(geojsonLayer);
     
-      fetch('bike_flow_cleaned.geojson.geojson')
+      fetch('bike_flow_cleaned.geojson')
         .then(res => res.json())
         .then(data => {
           geojsonLayer = L.geoJson(data, {
