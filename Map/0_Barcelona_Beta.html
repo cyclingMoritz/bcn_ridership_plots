@@ -9,18 +9,16 @@
   <style>
     #map { height: 90vh; width: 100%; }
     .control { padding: 10px; background: white; }
-    .attribution-box {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 8px 12px;
+    .leaflet-control.custom-attribution {
+      background: rgba(255,255,255,0.9);
       border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
       font-size: 12px;
       line-height: 1.3em;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      padding: 6px 10px;
+      margin: 10px;
     }
-    .attribution-box a {
+    .leaflet-control.custom-attribution a {
       color: #0066cc;
       text-decoration: none;
     }
@@ -37,20 +35,33 @@
   </div>
 
   <div id="map"></div>
-  <div class="attribution-box">
-    <strong>Bike Flow Map</strong><br>
-    © 2025 Luca Liebsch — All Rights Reserved<br>
-    Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-    CC BY-NC-SA 4.0</a><br>
-    Non-commercial use only. Please credit: “Luca Liebsch, Barcelona Supercomputing Center”.
-  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script src="https://unpkg.com/d3@7"></script>
 
   <script>
     const map = L.map('map').setView([41.3851, 2.1734], 13);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
+    }).addTo(map);
+
+    // --- Author/license control ---
+    const AuthorControl = L.Control.extend({
+      options: { position: 'bottomleft' },
+      onAdd: function (map) {
+        const div = L.DomUtil.create('div', 'leaflet-control custom-attribution');
+        div.innerHTML = `
+          <strong>Bike Flow Map</strong><br>
+          © 2025 Luca Liebsch<br>
+          Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+          CC BY-NC-SA 4.0</a><br>
+          Non-commercial use only.<br>
+          Please credit: “Luca Liebsch, Barcelona Supercomputing Center”.
+        `;
+        return div;
+      }
+    });
+    map.addControl(new AuthorControl());
 
     let geojsonLayer;
     const colorScales = {
@@ -78,7 +89,7 @@
     function updateMap(bins) {
       if (geojsonLayer) map.removeLayer(geojsonLayer);
     
-      fetch('bike_flow_cleaned.geojson')
+      fetch('bike_flow_beta.geojson')
         .then(res => res.json())
         .then(data => {
           geojsonLayer = L.geoJson(data, {
