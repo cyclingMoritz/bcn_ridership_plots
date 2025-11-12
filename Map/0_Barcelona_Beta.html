@@ -6,21 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="license" content="CC BY-NC-SA 4.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" />
   <style>
     #map { height: 90vh; width: 100%; }
     .control { padding: 10px; background: white; }
     .leaflet-control.custom-attribution {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.92);
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
       font-size: 12px;
-      line-height: 1.3em;
-      padding: 6px 10px;
-      margin: 10px;
+      line-height: 1.4em;
+      padding: 8px 12px;
+      max-width: 240px;
     }
     .leaflet-control.custom-attribution a {
-      color: #0066cc;
+      color: #0056b3;
       text-decoration: none;
+    }
+    .leaflet-control.custom-attribution a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -37,39 +41,47 @@
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
   <script src="https://unpkg.com/d3@7"></script>
 
   <script>
-    const map = L.map('map').setView([41.3851, 2.1734], 13);
+    // Initialize map
+    const map = L.map('map', { fullscreenControl: true })
+      .setView([41.3851, 2.1734], 13);
+
+    // Basemap
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
     }).addTo(map);
 
-    // --- Author/license control ---
+    // --- Author & License Control ---
     const AuthorControl = L.Control.extend({
       options: { position: 'bottomleft' },
       onAdd: function (map) {
         const div = L.DomUtil.create('div', 'leaflet-control custom-attribution');
         div.innerHTML = `
           <strong>Bike Flow Map</strong><br>
-          © 2025 Luca Liebsch<br>
-          Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-          CC BY-NC-SA 4.0</a><br>
-          Non-commercial use only.<br>
-          Please credit: “Luca Liebsch, Barcelona Supercomputing Center”.
+          © 2025 <a href="https://www.linkedin.com/in/luca-liebscht-674987212/" target="_blank">Luca Liebscht</a><br>
+          Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a><br>
+          Non-commercial use only.<br><br>
+          <em>Credits:</em><br>
+          <a href="https://www.bsc.es/es/liebscht-luca-moritz-liborio" target="_blank">Luca Liebscht</a>, 
+          <a href="https://bsc.es/viz/team/index.html" target="_blank">Data Analytics & Visualization Group</a>, 
+          <a href="https://www.bsc.es/es" target="_blank">Barcelona Supercomputing Center</a>.
         `;
         return div;
       }
     });
     map.addControl(new AuthorControl());
 
-    let geojsonLayer;
+    // --- Color Scales ---
     const colorScales = {
       default: [500, 1000, 1800, 3500],
       bikeOptimized: [400, 800, 1500, 3000],
       equalWidth: [1500, 3000, 4500, 6000]
     };
 
+    // --- Color functions ---
     function getColor(d, bins) {
       return d > bins[3] ? '#253494' :
              d > bins[2] ? '#2c7fb8' :
@@ -86,6 +98,8 @@
       };
     }
 
+    // --- Update Map ---
+    let geojsonLayer;
     function updateMap(bins) {
       if (geojsonLayer) map.removeLayer(geojsonLayer);
     
@@ -115,6 +129,7 @@
         });
     }
 
+    // --- Legend Control ---
     const legend = L.control({ position: 'bottomright' });
     legend.onAdd = function (map) {
       const div = L.DomUtil.create('div', 'info legend');
@@ -124,11 +139,13 @@
     };
     legend.addTo(map);
 
+    // --- Event listener for bin selection ---
     document.getElementById('binSelect').addEventListener('change', e => {
       const bins = colorScales[e.target.value];
       updateMap(bins);
     });
 
+    // --- Initial map load ---
     updateMap(colorScales.default);
   </script>
 </body>
