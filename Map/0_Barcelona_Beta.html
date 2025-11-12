@@ -4,10 +4,26 @@
   <meta charset="utf-8" />
   <title>Bike Flow Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="license" content="CC BY-NC-SA 4.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
   <style>
     #map { height: 90vh; width: 100%; }
     .control { padding: 10px; background: white; }
+    .attribution-box {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.3em;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .attribution-box a {
+      color: #0066cc;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -19,7 +35,15 @@
       <option value="equalWidth">Equal Width</option>
     </select>
   </div>
+
   <div id="map"></div>
+  <div class="attribution-box">
+    <strong>Bike Flow Map</strong><br>
+    © 2025 Luca Liebsch — All Rights Reserved<br>
+    Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+    CC BY-NC-SA 4.0</a><br>
+    Non-commercial use only. Please credit: “Luca Liebsch, Barcelona Supercomputing Center”.
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script src="https://unpkg.com/d3@7"></script>
@@ -30,9 +54,9 @@
 
     let geojsonLayer;
     const colorScales = {
-      default: [2500, 3500, 4500, 6000],
-      bikeOptimized: [2000, 3000, 4000, 5500],
-      equalWidth: [3000, 6000, 9000, 12000]
+      default: [500, 1000, 1800, 3500],
+      bikeOptimized: [400, 800, 1500, 3000],
+      equalWidth: [1500, 3000, 4500, 6000]
     };
 
     function getColor(d, bins) {
@@ -54,7 +78,7 @@
     function updateMap(bins) {
       if (geojsonLayer) map.removeLayer(geojsonLayer);
     
-      fetch('bike_flow.geojson')
+      fetch('bike_flow_cleaned.geojson.geojson')
         .then(res => res.json())
         .then(data => {
           geojsonLayer = L.geoJson(data, {
@@ -79,15 +103,16 @@
           legendDiv.innerHTML = `<strong>Bike Flow (AADBT)</strong><br>${labels.join('<br>')}`;
         });
     }
+
     const legend = L.control({ position: 'bottomright' });
-    
     legend.onAdd = function (map) {
       const div = L.DomUtil.create('div', 'info legend');
+      div.classList.add('legend');
       div.innerHTML = "<strong>Bike Flow (AADBT)</strong><br>";
       return div;
     };
-    
     legend.addTo(map);
+
     document.getElementById('binSelect').addEventListener('change', e => {
       const bins = colorScales[e.target.value];
       updateMap(bins);
